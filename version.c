@@ -11,6 +11,8 @@
 #define RELEASE 'a'                /* Release character */
 #define RELEASE_DATE "07-AUG-10"   /* Release date      */
 
+#include <stdio.h>
+
 #ifndef lint
 
 #ifdef __STDC__
