@@ -1,7 +1,6 @@
 
 SRC_DIR	= .
 OBJ_DIR	= ./OBJS
-RCS_DIR	= ./RCS
 
 SRCS	= $(SRC_DIR)/linkstat.c $(SRC_DIR)/version.c
 
@@ -66,18 +65,6 @@ $(OBJ_DIR)/linkstat.o: $(SRC_DIR)/linkstat.c $(SRC_DIR)/version.h
 $(OBJ_DIR)/version.o: $(SRC_DIR)/version.c $(SRC_DIR)/version.h
 	@$(ECHO) "version		: compiling	C code       -->  object code"
 	@$(CC) $(CFLAGS) $(INCL) -c $(SRC_DIR)/version.c -o $(OBJ_DIR)/version.o
-
-$(SRC_DIR)/linkstat.c: $(RCS_DIR)/linkstat.c,v
-	@$(ECHO) "linkstat.c	: retrieving	RCS code     -->  \c"
-	@co linkstat.c 2>&1 | grep revision
-
-$(SRC_DIR)/version.c: $(RCS_DIR)/version.c,v
-	@$(ECHO) "version.c	: retrieving	RCS code     -->  \c"
-	@co version.c 2>&1 | grep revision
-
-$(SRC_DIR)/version.h: $(RCS_DIR)/version.h,v
-	@$(ECHO) "version.h	: retrieving	RCS code     -->  \c"
-	@co version.h 2>&1 | grep revision
 
 clean:
 	@/bin/rm -f mon.out $(OBJS) *~ core
