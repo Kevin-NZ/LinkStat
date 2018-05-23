@@ -1,0 +1,152 @@
+.\"
+.\" nroff source for linkstat.1 man page
+.\"
+.\" Copyright 1998 by Kevin Clark
+.\"
+.\" Indented preformat macro. 
+.de EX
+.ne 5
+.if n .sp 1
+.if t .sp .5
+.nf
+.in +.5i
+..
+.de EE
+.fi
+.in -.5i
+.if n .sp 1
+.if t .sp .5
+..
+.\"
+.\" * * * * * Section * * * * *
+.\"
+.\" ***** SubSection *****
+.\"
+.TH linkstat 1 "February 21, 1998" "1.9.1"
+.\"
+.\" * * * * * NAME * * * * * 
+.\"
+.SH NAME
+linkstat \- a link status monitoring daemon
+.\"
+.\" * * * * * SYNOPSIS * * * * * 
+.\"
+.SH SYNOPSIS
+.BR "linkstat" " \-help | \-version"
+.br
+.B linkstat 
+.RI "[ \-t" " timeout " "] [ \-i" " interval " "] [ \-r" " retries " "] [ \-u" " update " "] [ \-n" " command " "] [ \-s" " time " "] [ \-f" " file " "] [ \-l" " logfile " "] [ \-m ]"
+.\"
+.\" * * * * * DESCRIPTION * * * * * 
+.\"
+.SH DESCRIPTION
+
+.\" ----- overview -----
+Linkstat is tool to monitor network interfaces.
+.PP
+.\" ----- usage overview -----
+Its aim is to provide a quick accurate method of monitoring system uptime.
+Using this program it is possible to get an immediate update when
+a system goes down.  It is also possible to calculate the uptime
+of a system and track when systems (WinNT) crash and automatically
+reboot.
+.PP
+.\" ----- design overview -----
+When started each host listed is processed one at a time and sent
+an ICMP packet followed by a 10ms pause (configured through the
+"interval" parameter).  If at the end of this process we are still
+waiting for some ICMP packets to return then we increase the
+pause interval by 2ms.  This will give each ICMP packet a little
+longer to return.  If after ten consecutive cycles we are not
+waiting for any packets then the pause interval starts to decrement
+by one for each ten cycles (for example if after 30 cycles we are
+still not waiting on any packets, then the pause interval will be
+decremented by 3ms during each cycle).  This process stops when
+either we hit the minimum interval (default 10ms) or we encounter
+an outstanding packet.
+
+At the end of each cycle we wait 1000ms (configured through the
+"timeout" parameter) for any outstanding packets.  This also has
+effect of pausing for at lease a second between cycles.
+
+If a packet is not received from a host after 3 consecutive cycles
+(configured through the "retry" parameter) then the host is
+considered to be "down".  A host is considered to be "up" as soon
+as any packet is received from it.
+.PP
+.\"
+.\" * * * * * OPTIONS * * * * * 
+.\"
+.SH OPTIONS 
+Linkstat supports the following command line options: 
+.TP
+.\" ----- help -----
+.B \-help 
+Display command line options, compiled-in features, and exit.
+.TP
+.\" ----- version -----
+.B \-version
+Display version and exit.
+.TP
+.\" ----- timeout -----
+.BI \-timeout \ NUM
+Set the delay between consecutive polls (default 1000 msecs)
+.TP 
+.\" ----- interval -----
+.BI \-interval \ NUM
+Set the delay between consecutive packets (default 10 msecs)
+.TP 
+.\" ----- retry -----
+.BI \-retry \ NUM
+Number of retries to a host (default 3)
+.TP 
+.\" ----- update -----
+.BI \-update \ NUM
+Specify the frequency of statistical updates (default 300 secs)
+.TP 
+.\" ----- notify -----
+.BI \-notify \ COMMAND
+Specify the command to run during state changes
+.TP 
+.\" ----- slarep -----
+.BI \-slarep \ NUM
+The delay in seconds before SLA report is run (default 5pm)
+.TP 
+.\" ----- file -----
+.BI \-file \ FILE
+Specify a file containing a list of hosts to check
+.TP 
+.\" ----- log -----
+.BI \-log \ FILE
+Specify a log file for any output when detached from a terminal
+.TP 
+.\" ----- mac_check -----
+.BI \-mac_check
+Check the MAC address of the returned packets
+.PP
+.\"
+.\" * * * * * STARTING AND EXITING BLACKBOX * * * * *
+.\"
+.SH STARTING LINKSTAT
+Starting linkstat can be as simple as:
+.B linkstat -f /etc/hosts
+.PP
+.\"
+.\" * * * * * HOST FILE * * * * *
+.\"
+.\" ----- overview -----
+.SH HOST FILE
+.TP
+.BI "IPAddr Hostname" " # (int=freq,ret=num,mon=HHMM:hhmm)"
+While the items after the "#" are optional, if you wish to use them they
+must appear in that order.  The currently supported options are as follows:
+ int=<frequency> - Sets how often to check the host (secs)
+ ret=<number>    - Sets the max number of packet retransmits
+ mon=<HHMM:hhmm> - Monitor between the hours of HHMM and hhmm
+.\"
+.\" * * * * * SEE ALSO * * * * * 
+.\"
+.SH SEE ALSO
+.EX 
+ping(8), netstat(8)
+.EE 

@@ -1,0 +1,12 @@
+*~
+.*.swp
+gmon.out
+linkstat
+LinkStat_HP.tgz
+OBJS/
+old/
+RCS/
+README
+RESOURCES.txt
+test_list
+TODO
