@@ -3,9 +3,9 @@
 gmon.out
 linkstat
 LinkStat_HP.tgz
-OBJS/
 old/
 RCS/
+OBJS/*
 README
 RESOURCES.txt
 test_list
